@@ -15,14 +15,14 @@ import numpy as np
 class CameraPublisher(Node):
     def __init__(self):
         super().__init__('camera_publisher')
-        self.publisher_ = self.create_publisher(Image, '/image_raw', 10)
+        self.publisher_ = self.create_publisher(Image, '/image_rgb', 10)
         self.bridge = CvBridge()
 
     def publish_image(self, image_data, width, height):
         image_np = np.frombuffer(image_data, dtype=np.uint8).reshape((height, width, 4))
         image_np = image_np[:, :, :3] 
         image_msg = self.bridge.cv2_to_imgmsg(image_np, encoding="bgr8")
-        image_msg.header.frame_id = "camera_top_simulated_nao"
+        image_msg.header.frame_id = "CameraTop_frame"
         image_msg.header.stamp = self.get_clock().now().to_msg()
 
         self.publisher_.publish(image_msg)
